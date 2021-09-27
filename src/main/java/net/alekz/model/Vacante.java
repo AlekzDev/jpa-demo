@@ -1,9 +1,14 @@
 package net.alekz.model;
 
+import javax.persistence.*;
 import java.util.Date;
 
+@Entity
+@Table(name="Vacante")
 public class Vacante {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	private String nombre;
 	private String descripcion;
