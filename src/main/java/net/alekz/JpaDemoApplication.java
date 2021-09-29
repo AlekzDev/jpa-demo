@@ -12,8 +12,12 @@ import java.util.Optional;
 @SpringBootApplication
 public class JpaDemoApplication  implements CommandLineRunner {
 
-	@Autowired
+	//@Autowired
 	private CategoriasRepository categoriasRepository;
+	
+	public JpaDemoApplication(CategoriasRepository categoriasRepository){
+		this.categoriasRepository = categoriasRepository;
+	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(JpaDemoApplication.class, args);
