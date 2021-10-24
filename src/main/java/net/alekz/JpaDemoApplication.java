@@ -5,6 +5,9 @@ import net.alekz.repository.CategoriasRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +38,12 @@ public class JpaDemoApplication  implements CommandLineRunner {
 		//encontrarPorIds();
 		//buscarTodas();
 		//existeid(20);
-		guardarTodos();
+		//guardarTodos();
+		//buscarTodosJpa();
+		//borrarTodosEnBatch();
+		//buscarTodosOrdenados();
+		//buscarTodosPaginacion();
+		buscarTodosPaginacionOrdenamiento();
 	}
 
 	public void guardar(){
@@ -113,5 +121,33 @@ public class JpaDemoApplication  implements CommandLineRunner {
 		categorias.add(cat3);
 
 		categoriasRepository.saveAll(categorias);
+	}
+
+	public void buscarTodosJpa(){
+		List<Categoria> categorias = categoriasRepository.findAll();
+		categorias.forEach(System.out::println);
+	}
+
+	public void borrarTodosEnBatch(){
+		categoriasRepository.deleteAllInBatch();
+	}
+
+	public void buscarTodosOrdenados(){
+		List<Categoria> categorias = categoriasRepository.findAll(Sort.by("nombre").descending());
+		categorias.forEach(System.out::println);
+	}
+
+	public void buscarTodosPaginacion(){
+		Page<Categoria> categorias = categoriasRepository.findAll(PageRequest.of(0,5));
+		System.out.println("Total elementos: " + categorias.getTotalElements());
+		System.out.println("Total páginas: " + categorias.getTotalPages());
+		categorias.forEach(System.out::println);
+	}
+
+	public void buscarTodosPaginacionOrdenamiento(){
+		Page<Categoria> categorias = categoriasRepository.findAll(PageRequest.of(0,5,Sort.by("nombre")));
+		System.out.println("Total elementos: " + categorias.getTotalElements());
+		System.out.println("Total páginas: " + categorias.getTotalPages());
+		categorias.forEach(System.out::println);
 	}
 }
