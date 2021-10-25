@@ -1,7 +1,9 @@
 package net.alekz;
 
 import net.alekz.model.Categoria;
+import net.alekz.model.Vacante;
 import net.alekz.repository.CategoriasRepository;
+import net.alekz.repository.VacantesRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -17,10 +20,12 @@ import java.util.Optional;
 public class JpaDemoApplication  implements CommandLineRunner {
 
 	//@Autowired
-	private CategoriasRepository categoriasRepository;
+	private final CategoriasRepository categoriasRepository;
+	private final VacantesRepository vacantesRepository;
 	
-	public JpaDemoApplication(CategoriasRepository categoriasRepository){
+	public JpaDemoApplication(CategoriasRepository categoriasRepository, VacantesRepository vacantesRepository){
 		this.categoriasRepository = categoriasRepository;
+		this.vacantesRepository = vacantesRepository;
 	}
 
 	public static void main(String[] args) {
@@ -43,7 +48,10 @@ public class JpaDemoApplication  implements CommandLineRunner {
 		//borrarTodosEnBatch();
 		//buscarTodosOrdenados();
 		//buscarTodosPaginacion();
-		buscarTodosPaginacionOrdenamiento();
+		//buscarTodosPaginacionOrdenamiento();
+		//buscarVacantes();
+		//guardarVacante();
+		modificarVacante(14);
 	}
 
 	public void guardar(){
@@ -150,4 +158,38 @@ public class JpaDemoApplication  implements CommandLineRunner {
 		System.out.println("Total páginas: " + categorias.getTotalPages());
 		categorias.forEach(System.out::println);
 	}
+
+	/**
+	 * Ejemplos sobre entidad Vacante
+	 */
+	public void buscarVacantes(){
+		List<Vacante> vacantes = vacantesRepository.findAll(Sort.by("categoria.nombre"));
+		vacantes.forEach(vacante -> System.out.println("Categoria: " + vacante.getCategoria().getNombre() +
+				"/ Vacante: " + vacante.getNombre() + " (id - "+ vacante.getId()+")"));
+	}
+
+	public void guardarVacante(){
+		Vacante vacante = new Vacante();
+		vacante.setNombre("Profesor");
+		vacante.setDescripcion("Profesor sustituto");
+		vacante.setFecha(new Date());
+		vacante.setSalario(18500.0);
+		vacante.setEstatus("Aprobada");
+		vacante.setDestacado(0);
+		vacante.setImagen("sustituto.png");
+		vacante.setDetalles("<<<<DETALLES>>>>");
+		vacante.setCategoria(buscarporid(15)); //Se busca Categoria
+		vacantesRepository.save(vacante);
+	}
+
+	public void modificarVacante(Integer id){
+		Optional<Vacante> vacanteO = vacantesRepository.findById(id);
+		Vacante vacante = vacanteO.orElse(null);
+		if(vacante != null){
+			vacante.setDetalles("<H1>Requesitos para el profesor sustituro</H1>");
+			vacantesRepository.save(vacante);
+		}
+
+	}
+
 }
