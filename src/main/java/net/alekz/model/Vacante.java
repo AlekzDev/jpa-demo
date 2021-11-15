@@ -18,6 +18,7 @@ public class Vacante {
 	private String imagen="no-image.png";
 	private String estatus;
 	private String detalles;
+
 	@OneToOne
 	@JoinColumn(name = "idCategoria")
 	private Categoria categoria;

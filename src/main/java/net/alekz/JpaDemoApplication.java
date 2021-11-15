@@ -1,8 +1,12 @@
 package net.alekz;
 
 import net.alekz.model.Categoria;
+import net.alekz.model.Perfil;
+import net.alekz.model.Usuario;
 import net.alekz.model.Vacante;
 import net.alekz.repository.CategoriasRepository;
+import net.alekz.repository.PerfilesRepository;
+import net.alekz.repository.UsuariosRepository;
 import net.alekz.repository.VacantesRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -22,10 +26,14 @@ public class JpaDemoApplication  implements CommandLineRunner {
 	//@Autowired
 	private final CategoriasRepository categoriasRepository;
 	private final VacantesRepository vacantesRepository;
+	private final PerfilesRepository perfilesRepository;
+	private final UsuariosRepository usuariosRepository;
 	
-	public JpaDemoApplication(CategoriasRepository categoriasRepository, VacantesRepository vacantesRepository){
+	public JpaDemoApplication(CategoriasRepository categoriasRepository, VacantesRepository vacantesRepository, PerfilesRepository perfilesRepository, UsuariosRepository usuariosRepository){
 		this.categoriasRepository = categoriasRepository;
 		this.vacantesRepository = vacantesRepository;
+		this.perfilesRepository = perfilesRepository;
+		this.usuariosRepository = usuariosRepository;
 	}
 
 	public static void main(String[] args) {
@@ -51,7 +59,10 @@ public class JpaDemoApplication  implements CommandLineRunner {
 		//buscarTodosPaginacionOrdenamiento();
 		//buscarVacantes();
 		//guardarVacante();
-		modificarVacante(14);
+		//modificarVacante(14);
+		//guardarPerfiles();
+		//crearUsuarioPerfiles();
+		buscarUsuario(2);
 	}
 
 	public void guardar(){
@@ -189,6 +200,52 @@ public class JpaDemoApplication  implements CommandLineRunner {
 			vacante.setDetalles("<H1>Requesitos para el profesor sustituro</H1>");
 			vacantesRepository.save(vacante);
 		}
+
+	}
+
+
+	public List<Perfil> getPerfilesAplicacion(){
+		List<Perfil> perfiles = new LinkedList<>();
+		perfiles.add(new Perfil("SUPERVISOR"));
+		perfiles.add(new Perfil("ADMINISTRADOR"));
+		perfiles.add(new Perfil("USUARIO"));
+		return perfiles;
+	}
+
+	public void guardarPerfiles(){
+		perfilesRepository.saveAll(getPerfilesAplicacion());
+	}
+
+	public void crearUsuarioPerfiles(){
+		Usuario usuario = new Usuario();
+		usuario.setUsername("avargas");
+		usuario.setNombre("Alejandro Vargas");
+		usuario.setEmail("avargas@mail.com");
+		usuario.setFechaRegistro(new Date());
+		usuario.setPassword("12345");
+		usuario.setEstatus(1);
+		usuario.addPerfil(getPerfilbyId(1));
+		usuario.addPerfil(getPerfilbyId(2));
+
+		usuariosRepository.save(usuario);
+	}
+
+	public Perfil getPerfilbyId(Integer id){
+		return perfilesRepository.getById(id);
+	}
+
+	public void buscarUsuario(Integer id){
+		Optional<Usuario> usuarioOptional = usuariosRepository.findById(id);
+		Usuario usuario = usuarioOptional.orElse(null);
+		if(usuario != null){
+			List<Perfil> perfiles = usuario.getPerfiles();
+			System.out.println(usuario.getNombre());
+			if(perfiles != null)
+				for(Perfil p : perfiles)
+					System.out.println(p.getPerfil());
+
+		} else
+			System.out.println("No se encontró usuario con id: " + id);
 
 	}
 
