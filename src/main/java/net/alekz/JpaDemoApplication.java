@@ -62,7 +62,11 @@ public class JpaDemoApplication  implements CommandLineRunner {
 		//modificarVacante(14);
 		//guardarPerfiles();
 		//crearUsuarioPerfiles();
-		buscarUsuario(2);
+		//buscarUsuario(2);
+		//buscarVacantesEstatus();
+		//buscarVacantesDestacadoEstatus();
+		//buscarVacantesSalario();
+		buscarVacantesVariosEstatus();
 	}
 
 	public void guardar(){
@@ -248,5 +252,32 @@ public class JpaDemoApplication  implements CommandLineRunner {
 			System.out.println("No se encontró usuario con id: " + id);
 
 	}
+
+	public void buscarVacantesEstatus(){
+		List<Vacante> vacantes = vacantesRepository.findByEstatusEquals("Aprobada");
+		System.out.println("Total registros encontrados: " + vacantes.size());
+		vacantes.forEach(System.out::println);
+	}
+
+	public void buscarVacantesDestacadoEstatus(){
+		List<Vacante> vacantes = vacantesRepository.findByDestacadoAndEstatusOrderByIdDesc(1, "Aprobada");
+		System.out.println("Total registros encontrados: " + vacantes.size());
+		vacantes.forEach(System.out::println);
+	}
+
+	public void buscarVacantesSalario(){
+		List<Vacante> vacantes = vacantesRepository.findBySalarioBetweenOrderBySalario(7000d, 14000d);
+		System.out.println("Total registros encontrados: " + vacantes.size());
+		vacantes.forEach(v -> System.out.println("Vacante: " + v.getNombre() + " Salario: " + v.getSalario()));
+	}
+
+	public void buscarVacantesVariosEstatus(){
+		List<Vacante> vacantes = vacantesRepository.findByEstatusInOrderByEstatusDesc(new String[]{"Aprobada", "Creada"});
+		System.out.println("Total registros encontrados: " + vacantes.size());
+		vacantes.forEach(v -> System.out.println("Vacante: " + v.getNombre() + " Estatus: " + v.getEstatus()));
+	}
+
+
+
 
 }
